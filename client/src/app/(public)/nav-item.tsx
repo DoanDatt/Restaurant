@@ -2,16 +2,19 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
+import { cn, getAccessTokenFromLocalStorage } from '@/lib/utils'
+import { useEffect, useState } from 'react'
 
 const menuItems = [
   {
     title: 'Món ăn',
-    href: '/menu'
+    href: '/menu',
+    authRequired: undefined
   },
   {
     title: 'Đơn hàng',
-    href: '/orders'
+    href: '/orders',
+    authRequired: true
   },
   {
     title: 'Đăng nhập',
@@ -26,11 +29,17 @@ const menuItems = [
 ]
 
 export default function NavItems({ className }: { className?: string }) {
+  // const [isAuth, setIsAuth] = useState<boolean>(false)
+  // useEffect(() => {
+  //   setIsAuth(Boolean(getAccessTokenFromLocalStorage))
+  // }, [])
+  const isAuth = Boolean(getAccessTokenFromLocalStorage)
   const pathname = usePathname()
 
   return menuItems.map((item) => {
     const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
 
+    if ((item.authRequired === false && isAuth) || (item.authRequired === true && !isAuth)) return null
     return (
       <Link
         href={item.href}

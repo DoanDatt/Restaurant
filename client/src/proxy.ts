@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const privatePath = ['/manage']
-const unAuthPath = ['login']
+const unAuthPath = ['/login']
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const isAuth = Boolean(request.cookies.get('accessToken')?.value)

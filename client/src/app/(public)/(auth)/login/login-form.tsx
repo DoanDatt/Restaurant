@@ -10,13 +10,14 @@ import { Button } from '@/components/ui/button'
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema'
-import { useLoginMutation } from '@/queries/useAuth'
+import { useLoginMutation, useLogoutMutation } from '@/queries/useAuth'
 import { toast } from 'sonner'
 import { handleErrorApi } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
 
 export default function LoginForm() {
   const loginMutation = useLoginMutation()
-
+  const router = useRouter()
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: { email: '', password: '' }
@@ -29,6 +30,7 @@ export default function LoginForm() {
       toast('Success', {
         description: result.payload.message
       })
+      router.push('/manage/dashboard')
     } catch (error: any) {
       handleErrorApi({
         error,

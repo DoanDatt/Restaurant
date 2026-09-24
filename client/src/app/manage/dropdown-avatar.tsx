@@ -16,11 +16,6 @@ import { useRouter } from 'next/navigation'
 import { handleErrorApi } from '@/lib/utils'
 import { useAccountProfile } from '@/queries/useAccount'
 
-const account = {
-  name: 'Nguyễn Văn A',
-  avatar: 'https://i.pravatar.cc/150'
-}
-
 export default function DropdownAvatar() {
   const logoutMutation = useLogoutMutation()
   const { data } = useAccountProfile()

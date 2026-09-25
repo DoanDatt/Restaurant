@@ -16,10 +16,11 @@ export function proxy(request: NextRequest) {
     return Response.redirect(new URL('/', request.url))
   }
   if (privatePath.some((path) => pathname.startsWith(path)) && !accessToken && refreshToken) {
-    const url = new URL('/logout', request.url)
+    const url = new URL('/refresh-token', request.url)
     // Tạo URL mới trỏ đến /logout, dựa trên domain hiện tại (request.url)
     url.searchParams.set('refreshToken', refreshToken)
     // Gắn refreshToken vào làm query param: /logout?refreshToken=xxx
+    url.searchParams.set('redirect', pathname)
     return NextResponse.redirect(url)
     //Redirect trình duyệt đến URL đó
   }

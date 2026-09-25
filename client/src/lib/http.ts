@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import envConfig from '@/config'
+import { normalizePath } from '@/lib/utils'
 import { LoginResType } from '@/schemaValidations/auth.schema'
 import { redirect } from 'next/navigation'
-import { normalizePath } from './utils'
 
 type CustomOptions = Omit<RequestInit, 'method'> & {
   baseUrl?: string | undefined
@@ -119,11 +119,12 @@ const request = async <Response>(
             // Nếu không không được xử lý đúng cách
             // Vì nếu rơi vào trường hợp tại trang Login, chúng ta có gọi các API cần access token
             // Mà access token đã bị xóa thì nó lại nhảy vào đây, và cứ thế nó sẽ bị lặp
-            // location.href = '/login'
-            redirect('/login')
+            location.href = '/login'
           }
         }
       } else {
+        // Đây là trường hợp khi mà chúng ta vẫn còn access token (còn hạn)
+        // Và chúng ta gọi API ở Next.js Server (Route Handler , Server Component) đến Server Backend
         const accessToken = (options?.headers as any)?.Authorization.split('Bearer ')[1]
         redirect(`/logout?accessToken=${accessToken}`)
       }

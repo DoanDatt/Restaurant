@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn, getAccessTokenFromLocalStorage } from '@/lib/utils'
 import { useEffect, useState } from 'react'
+import { useAppContext } from '@/components/app-provider'
 
 const menuItems = [
   {
@@ -29,11 +30,7 @@ const menuItems = [
 ]
 
 export default function NavItems({ className }: { className?: string }) {
-  // const [isAuth, setIsAuth] = useState<boolean>(false)
-  // useEffect(() => {
-  //   setIsAuth(Boolean(getAccessTokenFromLocalStorage))
-  // }, [])
-  const isAuth = Boolean(getAccessTokenFromLocalStorage)
+  const isAuth = useAppContext()
   const pathname = usePathname()
 
   return menuItems.map((item) => {

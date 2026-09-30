@@ -9,7 +9,10 @@ export function proxy(request: NextRequest) {
   const refreshToken = request.cookies.get('refreshToken')?.value
   // chưa đăng nhập thì không cho vào private path
   if (privatePath.some((path) => pathname.startsWith(path)) && !refreshToken) {
-    return Response.redirect(new URL('/login', request.url))
+    // return Response.redirect(new URL('/login', request.url))
+    const url = new URL('/login', request.url)
+    url.searchParams.set('clearToken', 'true')
+    return NextResponse.redirect(url)
   }
   // đăng nhập rồi thì không cho vào unAuthPath
   if (unAuthPath.some((path) => pathname.startsWith(path)) && refreshToken) {

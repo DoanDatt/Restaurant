@@ -25,5 +25,5 @@ export default async function Dashboard() {
     }
   }
 
-  return <div> {name}</div>
+  return <div>{name}</div>
 }

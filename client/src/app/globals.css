@@ -1,26 +1,82 @@
 @import 'tailwindcss';
 
+/* dark: variant theo class .dark (next-themes) thay vì theo cài đặt hệ điều hành */
+@custom-variant dark (&:is(.dark *));
+
+/* Bảng màu shadcn/ui — tông ấm, màu chính là cam giống trang login */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --radius: 0.75rem;
+  --background: #faf7f2;
+  --foreground: #1f1a15;
+  --card: #ffffff;
+  --card-foreground: #1f1a15;
+  --popover: #ffffff;
+  --popover-foreground: #1f1a15;
+  --primary: #e85d28;
+  --primary-foreground: #ffffff;
+  --secondary: #f3ede4;
+  --secondary-foreground: #3a3027;
+  --muted: #f3ede4;
+  --muted-foreground: #7a6f60;
+  --accent: #fcebe2;
+  --accent-foreground: #b8431a;
+  --destructive: #dc2626;
+  --border: #e7dfd3;
+  --input: #e0d6c8;
+  --ring: #e85d28;
+}
+
+.dark {
+  --background: #120f0c;
+  --foreground: #f5efe6;
+  --card: #1c1712;
+  --card-foreground: #f5efe6;
+  --popover: #1c1712;
+  --popover-foreground: #f5efe6;
+  --primary: #e85d28;
+  --primary-foreground: #ffffff;
+  --secondary: #26201a;
+  --secondary-foreground: #f5efe6;
+  --muted: #26201a;
+  --muted-foreground: #a79c8e;
+  --accent: #2e211a;
+  --accent-foreground: #f5a47f;
+  --destructive: #f05252;
+  --border: #332c24;
+  --input: #3a322a;
+  --ring: #e85d28;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground;
+  }
 }

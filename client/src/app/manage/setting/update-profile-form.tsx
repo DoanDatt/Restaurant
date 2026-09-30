@@ -1,9 +1,10 @@
 'use client'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Upload } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Camera, Loader2, Upload } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { UpdateMeBody, UpdateMeBodyType } from '@/schemaValidations/account.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -46,6 +47,15 @@ export default function UpdateProfileForm() {
     return avatar
   }, [avatar, file])
 
+  const account = data?.payload.data
+  const initials = name
+    .split(' ')
+    .filter(Boolean)
+    .slice(-2)
+    .map((word) => word[0].toUpperCase())
+    .join('')
+  const isSubmitting = updateMeMutation.isPending || uploadMediaMutation.isPending
+
   const reset = () => {
     form.reset()
     setFile(null)
@@ -79,28 +89,47 @@ export default function UpdateProfileForm() {
   return (
     <form
       noValidate
-      className='grid auto-rows-max items-start gap-4 md:gap-8'
       onReset={reset}
       onSubmit={form.handleSubmit(onSubmit, (e) => {
         console.log(e)
       })}
     >
-      <Card x-chunk='dashboard-07-chunk-0'>
-        <CardHeader>
+      <Card>
+        <CardHeader className='-mt-4 border-b bg-linear-to-r from-primary/15 via-primary/5 to-transparent pt-4'>
           <CardTitle>Thông tin cá nhân</CardTitle>
+          <CardDescription>{account?.email}</CardDescription>
+          {account?.role && (
+            <CardAction>
+              <Badge variant='outline' className='border-primary/30 bg-primary/10 text-primary'>
+                {account.role}
+              </Badge>
+            </CardAction>
+          )}
         </CardHeader>
         <CardContent>
-          <div className='grid gap-6'>
+          <FieldGroup className='gap-6'>
             <Controller
               control={form.control}
               name='avatar'
               render={({ field, fieldState }) => (
-                <div className='flex flex-col gap-2 items-start justify-start'>
-                  <div className='flex gap-2 items-start justify-start'>
-                    <Avatar className='aspect-square w-[100px] h-[100px] rounded-md object-cover'>
-                      <AvatarImage src={previewAvatar} />
-                      <AvatarFallback className='rounded-none'>{name}</AvatarFallback>
-                    </Avatar>
+                <Field data-invalid={fieldState.invalid}>
+                  <div className='flex items-center gap-5'>
+                    <button
+                      type='button'
+                      onClick={() => avatarInputRef.current?.click()}
+                      className='group relative shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50'
+                    >
+                      <Avatar className='size-20 ring-2 ring-primary/40 ring-offset-2 ring-offset-card'>
+                        <AvatarImage src={previewAvatar} alt={name} />
+                        <AvatarFallback className='bg-primary/15 text-xl font-medium text-primary'>
+                          {initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className='absolute inset-0 flex items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100'>
+                        <Camera className='size-5' />
+                      </span>
+                      <span className='sr-only'>Đổi ảnh đại diện</span>
+                    </button>
                     <input
                       type='file'
                       accept='image/*'
@@ -114,48 +143,43 @@ export default function UpdateProfileForm() {
                         }
                       }}
                     />
-                    <button
-                      className='flex aspect-square w-[100px] items-center justify-center rounded-md border border-dashed'
-                      type='button'
-                      onClick={() => avatarInputRef.current?.click()}
-                    >
-                      <Upload className='h-4 w-4 text-muted-foreground' />
-                      <span className='sr-only'>Upload</span>
-                    </button>
+                    <div className='space-y-2'>
+                      <Button type='button' variant='outline' size='sm' onClick={() => avatarInputRef.current?.click()}>
+                        <Upload />
+                        Tải ảnh lên
+                      </Button>
+                      <FieldDescription>
+                        {file ? file.name : 'Nên dùng ảnh vuông, định dạng JPG hoặc PNG.'}
+                      </FieldDescription>
+                    </div>
                   </div>
-                  {fieldState.invalid && (
-                    <p className='text-sm font-medium text-destructive'>{fieldState.error?.message}</p>
-                  )}
-                </div>
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
 
-            <div className='grid gap-3'>
-              <Label htmlFor='name'>Tên</Label>
-              <Controller
-                control={form.control}
-                name='name'
-                render={({ field, fieldState }) => (
-                  <>
-                    <Input id='name' type='text' className='w-full' {...field} />
-                    {fieldState.invalid && (
-                      <p className='text-sm font-medium text-destructive'>{fieldState.error?.message}</p>
-                    )}
-                  </>
-                )}
-              />
-            </div>
-
-            <div className=' items-center gap-2 md:ml-auto flex'>
-              <Button variant='outline' size='sm' type='reset'>
-                Hủy
-              </Button>
-              <Button size='sm' type='submit'>
-                Lưu thông tin
-              </Button>
-            </div>
-          </div>
+            <Controller
+              control={form.control}
+              name='name'
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor='name'>Tên hiển thị</FieldLabel>
+                  <Input id='name' type='text' aria-invalid={fieldState.invalid} {...field} />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+          </FieldGroup>
         </CardContent>
+        <CardFooter className='justify-end gap-2'>
+          <Button variant='ghost' type='reset'>
+            Hủy
+          </Button>
+          <Button type='submit' disabled={isSubmitting}>
+            {isSubmitting && <Loader2 className='animate-spin' />}
+            Lưu thay đổi
+          </Button>
+        </CardFooter>
       </Card>
     </form>
   )

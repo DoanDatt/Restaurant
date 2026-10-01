@@ -43,8 +43,11 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useSearchParams } from 'next/navigation'
 import AutoPagination from '@/components/auto-pagination'
+import EditEmployee from './edit-employee'
+import { useGetAccountList } from '@/queries/useAccount'
 
 type AccountItem = AccountListResType['data'][0]
+// kiểu dữ liệu của 1 item trong danh sách account
 
 const AccountTableContext = createContext<{
   setEmployeeIdEdit: (value: number) => void
@@ -165,8 +168,11 @@ export default function AccountTable() {
   const params = Object.fromEntries(searchParam.entries())
   const [employeeIdEdit, setEmployeeIdEdit] = useState<number | undefined>()
   const [employeeDelete, setEmployeeDelete] = useState<AccountItem | null>(null)
+  const accountListQuery = useGetAccountList()
+  const data = accountListQuery.data?.payload.data ?? []
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const data: any[] = []
+  // const data: any[] = []
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -208,7 +214,7 @@ export default function AccountTable() {
   return (
     <AccountTableContext.Provider value={{ employeeIdEdit, setEmployeeIdEdit, employeeDelete, setEmployeeDelete }}>
       <div className='w-full'>
-        {/* <EditEmployee id={employeeIdEdit} setId={setEmployeeIdEdit} onSubmitSuccess={() => {}} /> */}
+        <EditEmployee id={employeeIdEdit} setId={setEmployeeIdEdit} onSubmitSuccess={() => {}} />
         <AlertDialogDeleteAccount employeeDelete={employeeDelete} setEmployeeDelete={setEmployeeDelete} />
         <div className='flex items-center py-4'>
           <Input

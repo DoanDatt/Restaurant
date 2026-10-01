@@ -11,7 +11,7 @@ export function proxy(request: NextRequest) {
   if (privatePath.some((path) => pathname.startsWith(path)) && !refreshToken) {
     // return Response.redirect(new URL('/login', request.url))
     const url = new URL('/login', request.url)
-    url.searchParams.set('clearToken', 'true')
+    url.searchParams.set('clearTokens', 'true')
     return NextResponse.redirect(url)
   }
   // đăng nhập rồi thì không cho vào unAuthPath

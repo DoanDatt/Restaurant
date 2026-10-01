@@ -4,7 +4,7 @@ import { checkAndRefreshToken } from '@/lib/utils'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
-const UNAUTHENTICATED_PATH = ['/login', '/logout', 'refresh-token']
+const UNAUTHENTICATED_PATH = ['/login', '/logout', '/refresh-token']
 export default function RefreshToken() {
   const router = useRouter()
   const pathname = usePathname()

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
+import { useAppContext } from '@/components/app-provider'
 import { getAccessTokenFromLocalStorage, getRefreshTokenFormLocalStorage } from '@/lib/utils'
 import { useLogoutMutation } from '@/queries/useAuth'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -8,6 +9,7 @@ import { useEffect, useRef } from 'react'
 
 export default function LogoutPage() {
   const { mutateAsync } = useLogoutMutation()
+  const { setIsAuth } = useAppContext()
   const router = useRouter()
   const searchParams = useSearchParams()
   const accessTokenFromUrl = searchParams.get('accessToken')
@@ -20,14 +22,14 @@ export default function LogoutPage() {
         (accessTokenFromUrl && accessTokenFromUrl === getAccessTokenFromLocalStorage()))
     ) {
       ref.current = mutateAsync
-      mutateAsync()
-        .then((res) => {
-          setTimeout(() => {
-            ref.current = null
-          }, 1000)
-          router.push('/login')
-        })
-        .catch(() => router.push('/login'))
+      mutateAsync().then((res) => {
+        setTimeout(() => {
+          ref.current = null
+        }, 1000)
+        router.push('/login')
+      })
+      setIsAuth(false)
+      // .catch(() => router.push('/login'))
     } else {
       router.push('/')
     }

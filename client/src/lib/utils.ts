@@ -61,14 +61,15 @@ export const checkAndRefreshToken = async (param?: { onError?: () => void; onSuc
   const now = Math.round(new Date().getTime() / 1000)
   if (decodedRefreshToken.exp <= now) {
     removeTokensFromLocalStorage()
-    return param?.onError && param.onError
+    return param?.onError && param.onError()
   }
-  if (decodedAccessToken.exp - now < (decodedRefreshToken.exp - decodedRefreshToken.iat) / 3) {
+  // if (decodedAccessToken.exp - now < (decodedRefreshToken.exp - decodedRefreshToken.iat) / 3) {
+  if (decodedAccessToken.exp - now < (decodedAccessToken.exp - decodedAccessToken.iat) / 3) {
     try {
       const res = await authApiRequest.refreshToken()
       setAccessTokenToLocalStorage(res.payload.data.accessToken)
       setRefreshTokenToLocalStorage(res.payload.data.refreshToken)
-      param?.onSuccess && param.onSuccess
+      param?.onSuccess && param.onSuccess()
     } catch (error) {
       param?.onError && param.onError()
     }
